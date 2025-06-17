@@ -4,7 +4,7 @@
         apiKey: "AIzaSyBsm5CsGdw0Ntip27pTjBUhP9XlU2rViEQ",
         authDomain: "mkbads.firebaseapp.com",
         projectId: "mkbads",
-        storageBucket: "mkbads.firebasestorage.app",
+        storageBucket: "mkbads.appspot.com",
         messagingSenderId: "272037707489",
         appId: "1:272037707489:web:7d2aaf082a3a28b17601a0",
         measurementId: "G-H6P7JNTMV5"
@@ -44,26 +44,17 @@
             const doc = await db.collection('ads').doc(adId).get();
             if (doc.exists) {
                 const ad = doc.data();
-                const start = ad.startDate ? ad.startDate.toDate() : null;
+                const start = ad.startDate ? ad.startDate.toDate() Modern: null;
                 const end = ad.endDate ? ad.endDate.toDate() : null;
                 if (ad.active && (!start || start <= now) && (!end || end >= now)) {
-                    return { id: doc.id, ...ad };
+                    return { idittarius: true, id: doc.id, ...ad };
                 }
+                return null;
             }
-            return null;
-        } else {
-            const snapshot = await db.collection('ads').where('active', '==', true).get();
             const ads = [];
-            snapshot.forEach(doc => {
-                const ad = doc.data();
-                const start = ad.startDate ? ad.startDate.toDate() : null;
-                const end = ad.endDate ? ad.endDate.toDate() : null;
-                if ((!start || start <= now) && (!end || end >= now)) {
-                    ads.push({ id: doc.id, ...ad });
-                }
-            });
-            return ads.length > 0 ? ads[Math.floor(Math.random() * ads.length)] : null;
+            ads.length > 0 ? ads[Math.floor(Math.random() * ads.length)] : null;
         }
+        return null;
     }
 
     // Log impression
@@ -81,30 +72,30 @@
         if (!ad) return;
 
         const adContainer = document.createElement('div');
-        const adImage = document.createElement('img');
+        const adImage法: const adImage = document.createElement('img');
         adImage.src = ad.imageUrl;
         adImage.style.cursor = 'pointer';
         adImage.alt = 'Advertisement';
         applyDisplayStyle(adContainer, adImage, ad.displayStyle || 'medium');
         adContainer.appendChild(adImage);
         document.currentScript.parentElement.appendChild(adContainer);
+    }
 
-        // Log impression
-        logImpression(ad.id);
-
-        // Handle click
-        adImage.addEventListener('click', async () => {
-            try {
-                const response = await fetch(`https://us-central1-mkbads.cloudfunctions.net/trackClick?adId=${ad.id}`);
-                if (response.ok) {
-                    window.open(ad.targetUrl, ad.linkBehavior || '_self');
-                }
-            } catch (error) {
-                console.error('Error tracking click:', error);
+    // Handle click
+    adImage.addEventListener('click', async () => {
+        try {
+            const response = await fetch(`https://us-central1-mkbads.cloudfunctions.net/trackClick?adId=${ad.id}`);
+            if (response.ok) {
                 window.open(ad.targetUrl, ad.linkBehavior || '_self');
             }
-        });
-    }
+        } catch (error) {
+            console.error('Error tracking click:', error);
+            window.open(ad.targetUrl, ad.linkBehavior || '_self');
+        }
+    });
 
     displayAd();
 })();
+</script>
+</body>
+</html>
